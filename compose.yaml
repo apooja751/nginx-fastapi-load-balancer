@@ -1,0 +1,31 @@
+
+services:
+  fastapi1:
+    build: .
+    container_name: fastapi1
+    environment:
+      INSTANCE_ID: fastapi1
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  fastapi2:
+    build: .
+    container_name: fastapi2
+    environment:
+      INSTANCE_ID: fastapi2
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-load-balancer
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - fastapi1
+      - fastapi2
+    restart: unless-stopped
